@@ -1,0 +1,610 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Academic Priority Planner</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">AI</div>
+            <div>
+                <h2>Academic AI</h2>
+                <span>Priority Planner</span>
+            </div>
+        </div>
+
+        <nav>
+            <button class="nav-item active" onclick="showSection('dashboard')">
+                <span>⌂</span>
+                Dashboard
+            </button>
+
+            <button class="nav-item" onclick="showSection('tasks')">
+                <span>✓</span>
+                Tasks
+            </button>
+
+            <button class="nav-item" onclick="showSection('calendar')">
+                <span>▣</span>
+                Academic Calendar
+            </button>
+
+            <button class="nav-item" onclick="showSection('study')">
+                <span>◈</span>
+                Study Priority
+            </button>
+
+            <button class="nav-item" onclick="showSection('profile')">
+                <span>◎</span>
+                Learning Profile
+            </button>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="ai-status">
+                <span class="status-dot"></span>
+                AI Engine Active
+            </div>
+        </div>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+    <main class="main-content">
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div>
+                <p class="small-label">ACADEMIC PLANNER</p>
+                <h1 id="pageTitle">Good evening, Student 👋</h1>
+            </div>
+
+            <div class="top-date">
+                <span>Today</span>
+                <strong id="currentDate"></strong>
+            </div>
+
+        </header>
+
+
+        <!-- =========================
+             DASHBOARD
+        ========================== -->
+
+        <section id="dashboard" class="page-section active-section">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Dashboard</h2>
+                    <p>Your personalized academic priorities.</p>
+                </div>
+
+                <button class="primary-button" onclick="openTaskModal()">
+                    + Add Task
+                </button>
+            </div>
+
+
+            <!-- MAIN AI RECOMMENDATION -->
+
+            <div class="recommendation-card">
+
+                <div class="recommendation-header">
+
+                    <div>
+                        <span class="ai-label">✦ AI RECOMMENDATION</span>
+                        <h2>What should I do now?</h2>
+                    </div>
+
+                    <span id="recommendationPriority" class="priority-badge high">
+                        HIGH PRIORITY
+                    </span>
+
+                </div>
+
+
+                <div class="recommendation-body">
+
+                    <div class="recommendation-main">
+
+                        <div class="task-icon">◈</div>
+
+                        <div>
+                            <h3 id="recommendedTask">
+                                Loading recommendation...
+                            </h3>
+
+                            <p id="recommendedDuration">
+                                Recommended duration: --
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="recommendation-details">
+
+                        <div>
+                            <span>Deadline</span>
+                            <strong id="recommendedDeadline">--</strong>
+                        </div>
+
+                        <div>
+                            <span>Priority Score</span>
+                            <strong id="recommendedScore">--</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ai-reason">
+
+                    <strong>Why this task?</strong>
+
+                    <p id="recommendationReason">
+                        Calculating your priorities...
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- STAT CARDS -->
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <div class="stat-icon blue">✓</div>
+                    <div>
+                        <span>Active Tasks</span>
+                        <strong id="activeTasksCount">0</strong>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon orange">!</div>
+                    <div>
+                        <span>High Priority</span>
+                        <strong id="highPriorityCount">0</strong>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon purple">◈</div>
+                    <div>
+                        <span>Upcoming Exams</span>
+                        <strong id="examCount">0</strong>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon green">◷</div>
+                    <div>
+                        <span>Estimated Hours</span>
+                        <strong id="totalHours">0h</strong>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- DASHBOARD GRID -->
+
+            <div class="dashboard-grid">
+
+                <!-- UPCOMING DEADLINES -->
+
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <h3>Upcoming Deadlines</h3>
+                            <p>What is approaching next?</p>
+                        </div>
+
+                        <button onclick="showSection('tasks')" class="text-button">
+                            View all →
+                        </button>
+                    </div>
+
+                    <div id="upcomingTasks"></div>
+
+                </div>
+
+
+                <!-- WORKLOAD -->
+
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <h3>Workload Forecast</h3>
+                            <p>Next 7 days</p>
+                        </div>
+                    </div>
+
+                    <div id="workloadWarning" class="workload-warning">
+                        Loading...
+                    </div>
+
+                    <div id="workloadChart" class="workload-chart"></div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             TASKS
+        ========================== -->
+
+        <section id="tasks" class="page-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>Academic Tasks</h2>
+                    <p>Manage assignments, quizzes, projects and examinations.</p>
+                </div>
+
+                <button class="primary-button" onclick="openTaskModal()">
+                    + Add Task
+                </button>
+
+            </div>
+
+
+            <div class="filter-bar">
+
+                <button class="filter active" onclick="filterTasks('all', this)">
+                    All
+                </button>
+
+                <button class="filter" onclick="filterTasks('high', this)">
+                    High Priority
+                </button>
+
+                <button class="filter" onclick="filterTasks('pending', this)">
+                    Pending
+                </button>
+
+                <button class="filter" onclick="filterTasks('completed', this)">
+                    Completed
+                </button>
+
+            </div>
+
+
+            <div id="taskList" class="task-list"></div>
+
+        </section>
+
+
+        <!-- =========================
+             CALENDAR
+        ========================== -->
+
+        <section id="calendar" class="page-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>Academic Calendar</h2>
+                    <p>Keep track of important academic events.</p>
+                </div>
+
+                <button class="primary-button" onclick="openTaskModal()">
+                    + Add Event
+                </button>
+
+            </div>
+
+
+            <div class="calendar-panel">
+
+                <div class="calendar-header">
+
+                    <button onclick="changeMonth(-1)">‹</button>
+
+                    <h2 id="calendarMonth"></h2>
+
+                    <button onclick="changeMonth(1)">›</button>
+
+                </div>
+
+                <div class="calendar-weekdays">
+
+                    <span>Sun</span>
+                    <span>Mon</span>
+                    <span>Tue</span>
+                    <span>Wed</span>
+                    <span>Thu</span>
+                    <span>Fri</span>
+                    <span>Sat</span>
+
+                </div>
+
+                <div id="calendarGrid" class="calendar-grid"></div>
+
+            </div>
+
+
+            <div class="panel calendar-events">
+
+                <div class="panel-header">
+
+                    <div>
+                        <h3>Upcoming Academic Events</h3>
+                        <p>Important dates requiring attention.</p>
+                    </div>
+
+                </div>
+
+                <div id="eventList"></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             STUDY PRIORITY
+        ========================== -->
+
+        <section id="study" class="page-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>What should I study first?</h2>
+
+                    <p>
+                        AI-ranked subjects based on your exams,
+                        confidence and preparation requirements.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="study-highlight">
+
+                <span class="ai-label">✦ AI STUDY PRIORITY</span>
+
+                <h2 id="studyTopSubject">
+                    Calculating...
+                </h2>
+
+                <p id="studyTopReason">
+                    Analyzing your upcoming examinations.
+                </p>
+
+            </div>
+
+
+            <div id="studyRanking" class="study-ranking"></div>
+
+        </section>
+
+
+        <!-- =========================
+             PROFILE
+        ========================== -->
+
+        <section id="profile" class="page-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>Learning Profile</h2>
+                    <p>
+                        Your academic strengths and weaknesses
+                        help personalize recommendations.
+                    </p>
+                </div>
+
+                <button class="primary-button" onclick="saveProfile()">
+                    Save Profile
+                </button>
+
+            </div>
+
+
+            <div id="profileList" class="profile-list"></div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         ADD TASK MODAL
+    ========================== -->
+
+    <div id="taskModal" class="modal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <div>
+                    <h2>Add Academic Task</h2>
+                    <p>Add a task for the AI priority engine.</p>
+                </div>
+
+                <button class="close-button" onclick="closeTaskModal()">
+                    ×
+                </button>
+
+            </div>
+
+
+            <form id="taskForm">
+
+                <div class="form-grid">
+
+                    <div class="form-group full">
+
+                        <label>Task Name</label>
+
+                        <input
+                            type="text"
+                            id="taskName"
+                            placeholder="e.g. Operating Systems Assignment"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Subject</label>
+
+                        <input
+                            type="text"
+                            id="taskSubject"
+                            placeholder="e.g. Operating Systems"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Task Type</label>
+
+                        <select id="taskType">
+
+                            <option>Assignment</option>
+                            <option>Lab</option>
+                            <option>Quiz</option>
+                            <option>Viva</option>
+                            <option>Project</option>
+                            <option>Presentation</option>
+                            <option>Examination</option>
+                            <option>Other</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Deadline</label>
+
+                        <input
+                            type="date"
+                            id="taskDeadline"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Estimated Hours</label>
+
+                        <input
+                            type="number"
+                            id="taskHours"
+                            min="0.5"
+                            step="0.5"
+                            value="2"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Difficulty</label>
+
+                        <select id="taskDifficulty">
+
+                            <option value="1">Easy</option>
+                            <option value="2" selected>Moderate</option>
+                            <option value="3">Hard</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Importance / Marks</label>
+
+                        <input
+                            type="number"
+                            id="taskImportance"
+                            min="1"
+                            max="10"
+                            value="5"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Completion %</label>
+
+                        <input
+                            type="number"
+                            id="taskCompletion"
+                            min="0"
+                            max="100"
+                            value="0"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <button class="primary-button submit-button" type="submit">
+                    Add Task
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
+```
